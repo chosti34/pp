@@ -6,8 +6,10 @@ namespace
 {
 	struct ThreadSharedInfo
 	{
+		const size_t maxIterations;
 		size_t iterations;
 		size_t pointsInside;
+		size_t* progress;
 	};
 
 	const float CIRCLE_RADIUS = 1.f;
@@ -24,12 +26,25 @@ namespace
 		{
 			const float x = Random::Get(-CIRCLE_RADIUS, CIRCLE_RADIUS);
 			const float y = Random::Get(-CIRCLE_RADIUS, CIRCLE_RADIUS);
-
 			if (IsPointInsideCircle(x, y, CIRCLE_RADIUS))
 			{
-				++info->pointsInside;
+				InterlockedIncrement(&info->pointsInside);
 			}
+			InterlockedIncrement(info->progress);
 		}
+		return 0;
+	}
+
+	DWORD WINAPI PrintCalculationProgress(LPVOID lParam)
+	{
+		ThreadSharedInfo* info = reinterpret_cast<ThreadSharedInfo*>(lParam);
+		do
+		{
+			std::cout << "[" << *info->progress << "/" << info->maxIterations << "]\r";
+			std::this_thread::sleep_for(std::chrono::duration<float>(0.05f));
+		}
+		while (*info->progress != info->maxIterations);
+		std::cout << "[" << *info->progress << "/" << info->maxIterations << "]" << std::endl;
 		return 0;
 	}
 }
@@ -55,9 +70,11 @@ float App::Execute(size_t iterations, size_t threads)
 	}
 
 	std::vector<ThreadSharedInfo> results;
+	size_t progress = 0;
+
 	for (size_t i = 0; i < threads; ++i)
 	{
-		results.push_back({ iterations / threads, 0 });
+		results.push_back({ iterations, iterations / threads, 0, &progress });
 	}
 	results.back().iterations += iterations % threads;
 
@@ -66,7 +83,10 @@ float App::Execute(size_t iterations, size_t threads)
 		m_hThreads.push_back(CreateThread(NULL, 0, CalculatePointsInsideCircle, &results[i], 0, 0));
 	}
 
-	WaitForMultipleObjects(DWORD(threads), m_hThreads.data(), TRUE, INFINITE);
+	ThreadSharedInfo progressInfo = { iterations, 0, 0, &progress };
+	m_hThreads.push_back(CreateThread(NULL, 0, PrintCalculationProgress, &progressInfo, 0, 0));
+
+	WaitForMultipleObjects(DWORD(m_hThreads.size()), m_hThreads.data(), TRUE, INFINITE);
 
 	size_t pointsCount = 0;
 	std::for_each(results.begin(), results.end(), [&pointsCount](const ThreadSharedInfo& info) {
