@@ -21,6 +21,7 @@ double Random::Get(double min, double max)
 	return distribution(GetEngineInstance());
 }
 
+// TODO: is this thread-safe?
 std::mt19937& Random::GetEngineInstance()
 {
 	static std::random_device device; // seeder
