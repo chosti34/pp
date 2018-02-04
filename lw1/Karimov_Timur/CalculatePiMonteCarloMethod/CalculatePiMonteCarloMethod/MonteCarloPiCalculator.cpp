@@ -66,20 +66,20 @@ size_t GetPointsCountInsideCircle(size_t totalIterations, size_t threadsCount)
 	}
 
 	ThreadManager threads;
-	std::vector<CalculateThreadSharedInfo> results;
+	std::vector<CalculateThreadSharedInfo> threadSharedInfos;
 
 	size_t currentIterations = 0;
 	size_t pointsInsideCircle = 0;
 
 	for (size_t i = 0; i < threadsCount; ++i)
 	{
-		results.push_back({ totalIterations / threadsCount, &pointsInsideCircle, &currentIterations });
+		threadSharedInfos.push_back({ totalIterations / threadsCount, &pointsInsideCircle, &currentIterations });
 	}
-	results.back().iterations += totalIterations % threadsCount;
+	threadSharedInfos.back().iterations += totalIterations % threadsCount;
 
 	for (size_t i = 0; i < threadsCount; ++i)
 	{
-		threads.Add(CalculatePointsInsideCircle, &results[i]);
+		threads.Add(CalculatePointsInsideCircle, &threadSharedInfos[i]);
 	}
 
 	ProgressBarThreadSharedInfo progressInfo = { totalIterations, &currentIterations };
