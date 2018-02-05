@@ -3,39 +3,40 @@
 #include "ThreadManager.h"
 #include "Random.h"
 #include "Math.h"
-#include "MonteCarloPiCalculator.h"
 
 namespace
 {
-size_t GetPointsCountInsideCircle(size_t totalIterations, size_t threadsCount)
+size_t CountPointsMultithreaded(size_t iterationsCount, size_t threadsCount)
 {
-	if (totalIterations == 0 || threadsCount == 0)
+	if (iterationsCount == 0 || threadsCount == 0)
 	{
 		throw std::invalid_argument("can't calculate PI with such parameters");
 	}
 
-	ThreadManager threads;
-	std::vector<CalculateThreadSharedInfo> threadSharedInfos;
-
 	size_t currentIterations = 0;
-	size_t pointsInsideCircle = 0;
+	size_t count = 0;
 
+	std::vector<CalculateThreadSharedInfo> threadSharedInfos;
 	for (size_t i = 0; i < threadsCount; ++i)
 	{
-		threadSharedInfos.push_back({ totalIterations / threadsCount, &pointsInsideCircle, &currentIterations });
+		threadSharedInfos.push_back({ iterationsCount / threadsCount, &count, &currentIterations });
 	}
-	threadSharedInfos.back().iterations += totalIterations % threadsCount;
 
+	// If iterations count cannot be whole divided by threads count, last thread will process all remaining iterations
+	threadSharedInfos.back().iterations += iterationsCount % threadsCount;
+
+	ThreadManager threads;
 	for (size_t i = 0; i < threadsCount; ++i)
 	{
-		threads.Add(CountPointsInsideCircleInChildThread, &threadSharedInfos[i]);
+		threads.Add(CountPointsInsideCircle, &threadSharedInfos[i]);
 	}
 
-	ProgressBarThreadSharedInfo progressInfo = { totalIterations, &currentIterations };
+	// Printing progress bar will be handled in another thread
+	ProgressBarThreadSharedInfo progressInfo = { iterationsCount, &currentIterations };
 	threads.Add(DumpCurrentProgressToStdout, &progressInfo);
 
 	threads.JoinAll();
-	return pointsInsideCircle;
+	return count;
 }
 }
 
@@ -47,5 +48,5 @@ MultiThreadedCalculatePiStrategy::MultiThreadedCalculatePiStrategy(size_t iterat
 
 float MultiThreadedCalculatePiStrategy::Calculate()
 {
-	return 4.f * float(GetPointsCountInsideCircle(m_iterationsCount, m_threadsCount)) / m_iterationsCount;
+	return 4.f * float(CountPointsMultithreaded(m_iterationsCount, m_threadsCount)) / m_iterationsCount;
 }
