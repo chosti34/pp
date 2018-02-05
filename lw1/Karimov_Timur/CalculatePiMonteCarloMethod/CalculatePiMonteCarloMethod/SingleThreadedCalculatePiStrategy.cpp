@@ -3,28 +3,10 @@
 #include "Random.h"
 #include "Math.h"
 #include "ThreadManager.h"
+#include "MonteCarloPiCalculator.h"
 
 namespace
 {
-struct ProgressBarThreadSharedInfo
-{
-	size_t totalIterations;
-	size_t* currentIterations;
-};
-
-DWORD WINAPI DumpCurrentProgressToStdout(LPVOID lParam)
-{
-	ProgressBarThreadSharedInfo* info = reinterpret_cast<ProgressBarThreadSharedInfo*>(lParam);
-	do
-	{
-		std::cout << "[" << *info->currentIterations << "/" << info->totalIterations << "]\r";
-		std::this_thread::sleep_for(std::chrono::duration<float>(0.05f));
-	}
-	while (*info->currentIterations != info->totalIterations);
-	std::cout << "[" << *info->currentIterations << "/" << info->totalIterations << "]" << std::endl;
-	return 0;
-}
-
 size_t CountPointsInsideCircle(size_t iterationsCount)
 {
 	static const float radius = 1.f;
