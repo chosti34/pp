@@ -15,7 +15,7 @@ struct ProgressBarThreadSharedInfo
 };
 
 DWORD WINAPI DumpCurrentProgressToStdout(LPVOID lParam);
-DWORD WINAPI CountPointsInsideCircle(LPVOID lParam);
+DWORD WINAPI CountPointsInsideCircleInChildThread(LPVOID lParam);
 
 class MonteCarloPiCalculator
 {

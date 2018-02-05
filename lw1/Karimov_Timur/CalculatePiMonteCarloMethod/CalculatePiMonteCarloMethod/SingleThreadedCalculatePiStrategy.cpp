@@ -7,7 +7,7 @@
 
 namespace
 {
-size_t CountPointsInsideCircle(size_t iterationsCount)
+size_t CountPointsInsideCircleInChildThread(size_t iterationsCount)
 {
 	static const float radius = 1.f;
 	size_t count = 0;
@@ -41,5 +41,5 @@ SingleThreadedCalculatePiStrategy::SingleThreadedCalculatePiStrategy(size_t iter
 
 float SingleThreadedCalculatePiStrategy::Calculate()
 {
-	return 4.f * float(CountPointsInsideCircle(m_iterationsCount)) / float(m_iterationsCount);
+	return 4.f * float(CountPointsInsideCircleInChildThread(m_iterationsCount)) / float(m_iterationsCount);
 }

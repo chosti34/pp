@@ -28,7 +28,7 @@ size_t GetPointsCountInsideCircle(size_t totalIterations, size_t threadsCount)
 
 	for (size_t i = 0; i < threadsCount; ++i)
 	{
-		threads.Add(CountPointsInsideCircle, &threadSharedInfos[i]);
+		threads.Add(CountPointsInsideCircleInChildThread, &threadSharedInfos[i]);
 	}
 
 	ProgressBarThreadSharedInfo progressInfo = { totalIterations, &currentIterations };

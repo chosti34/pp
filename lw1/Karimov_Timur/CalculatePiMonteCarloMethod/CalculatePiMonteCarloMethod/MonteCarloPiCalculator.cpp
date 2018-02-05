@@ -36,7 +36,7 @@ DWORD WINAPI DumpCurrentProgressToStdout(LPVOID lParam)
 	return 0;
 }
 
-DWORD CountPointsInsideCircle(LPVOID lParam)
+DWORD CountPointsInsideCircleInChildThread(LPVOID lParam)
 {
 	// is this thread-safe?
 	static const float radius = 1.f;
