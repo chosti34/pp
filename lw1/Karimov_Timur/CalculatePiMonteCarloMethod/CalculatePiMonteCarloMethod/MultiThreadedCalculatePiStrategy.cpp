@@ -19,11 +19,24 @@ size_t CountPointsMultithreaded(size_t iterationsCount, size_t threadsCount)
 	std::vector<CalculateThreadSharedInfo> threadSharedInfos;
 	for (size_t i = 0; i < threadsCount; ++i)
 	{
-		threadSharedInfos.push_back({ iterationsCount / threadsCount, &count, &currentIterations });
+		CalculateThreadSharedInfo info;
+		info.iterations = iterationsCount / threadsCount;
+		info.currentIterations = &currentIterations;
+		info.pointsInside = &count;
+		threadSharedInfos.push_back(info);
 	}
 
-	// If iterations count cannot be whole divided by threads count, last thread will process all remaining iterations
-	threadSharedInfos.back().iterations += iterationsCount % threadsCount;
+	size_t remainingIterationsCount = iterationsCount % threadsCount;
+	// the remainder is always smaller than the divisor
+	for (size_t i = 0; i < threadsCount; ++i)
+	{
+		if (remainingIterationsCount == 0)
+		{
+			break;
+		}
+		++threadSharedInfos[i].iterations;
+		--remainingIterationsCount;
+	}
 
 	ThreadManager threads;
 	for (size_t i = 0; i < threadsCount; ++i)
@@ -31,8 +44,10 @@ size_t CountPointsMultithreaded(size_t iterationsCount, size_t threadsCount)
 		threads.Add(CountPointsInsideCircle, &threadSharedInfos[i]);
 	}
 
-	// Printing progress bar will be handled in another thread
-	ProgressBarThreadSharedInfo progressInfo = { iterationsCount, &currentIterations };
+	// printing progress bar will be handled in another thread
+	ProgressBarThreadSharedInfo progressInfo;
+	progressInfo.totalIterations = iterationsCount;
+	progressInfo.currentIterations = &currentIterations;
 	threads.Add(DumpCurrentProgressToStdout, &progressInfo);
 
 	threads.JoinAll();
