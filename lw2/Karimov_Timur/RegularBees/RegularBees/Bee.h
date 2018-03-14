@@ -25,6 +25,7 @@ public:
 			{
 				GatherHoneySip();
 			}
+
 			WaitForSingleObject(*m_noBeesPuttingHoney, INFINITE);
 			if (m_pot.TryPutHoneySip())
 			{
@@ -37,6 +38,7 @@ public:
 				//  нужно будить медведя
 				std::printf("Bee #%u is trying to put honey's sip but pot is full! Waking up bear...\n", m_id);
 				SetEvent(*m_wakeBear);
+				WaitForSingleObject(*m_noBeesPuttingHoney, INFINITE);
 			}
 			ReleaseSemaphore(*m_noBeesPuttingHoney, 1u, NULL);
 		}
