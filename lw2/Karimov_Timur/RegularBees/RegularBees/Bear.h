@@ -30,4 +30,5 @@ public:
 private:
 	Pot& m_pot;
 	HANDLE* m_wakeBear;
+	HANDLE* m_noBeesPuttingHoney;
 };

@@ -32,6 +32,16 @@ public:
 		}
 	}
 
+	unsigned GetHoneySipsCount()const
+	{
+		return m_honeySipCount;
+	}
+
+	unsigned GetCapacity()const
+	{
+		return m_capacity;
+	}
+
 private:
 	unsigned m_capacity;
 	unsigned m_honeySipCount;
