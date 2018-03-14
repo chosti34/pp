@@ -145,12 +145,17 @@
   <ItemGroup>
     <ClInclude Include="Bear.h" />
     <ClInclude Include="Bee.h" />
+    <ClInclude Include="Chronometer.h" />
     <ClInclude Include="Pot.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bear.cpp" />
+    <ClCompile Include="Bee.cpp" />
+    <ClCompile Include="Chronometer.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Pot.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

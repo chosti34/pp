@@ -3,44 +3,13 @@
 class Pot
 {
 public:
-	Pot(unsigned capacity)
-		: m_capacity(capacity)
-		, m_honeySipCount(0u)
-	{
-	}
+	Pot(unsigned capacity);
 
-	bool TryPutHoneySip()
-	{
-		if (m_honeySipCount < m_capacity)
-		{
-			++m_honeySipCount;
-			return true;
-		}
-		return false;
-	}
-
-	bool IsEmpty()const
-	{
-		return m_honeySipCount == 0u;
-	}
-
-	void PopHoneySip()
-	{
-		if (m_honeySipCount > 0)
-		{
-			--m_honeySipCount;
-		}
-	}
-
-	unsigned GetHoneySipsCount()const
-	{
-		return m_honeySipCount;
-	}
-
-	unsigned GetCapacity()const
-	{
-		return m_capacity;
-	}
+	bool TryPutHoneySip();
+	bool IsEmpty()const;
+	void PopHoneySip();
+	unsigned GetHoneySipsCount()const;
+	unsigned GetCapacity()const;
 
 private:
 	unsigned m_capacity;
