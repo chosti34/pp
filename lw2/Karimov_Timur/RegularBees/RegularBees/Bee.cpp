@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Bee.h"
+#include "Random.h"
 
 Bee::Bee(unsigned id, Pot& pot,
 	std::shared_ptr<Event> wakeBearEvent,
@@ -41,7 +42,7 @@ void Bee::GatherHoneySipIfNotGatheredYet()
 	if (!m_gathered)
 	{
 		std::printf("Bee #%u gathering honey...\n", m_id);
-		Sleep(300u);
+		Sleep(Random::Get(300, 1000));
 		m_gathered = true;
 		std::printf("Bee #%d gathered one honey's sip!\n", m_id);
 	}
