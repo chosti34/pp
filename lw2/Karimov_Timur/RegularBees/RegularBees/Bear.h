@@ -1,18 +1,15 @@
 #pragma once
-#include <cstdio>
 #include "Pot.h"
-#include <Windows.h>
-#include <cassert>
-#include "Chronometer.h"
+#include "ForwardDeclarations.h"
 
 class Bear
 {
 public:
-	Bear(Pot& pot, HANDLE hWakeBearEvent, HANDLE hBeesPotAccessSemaphore);
+	Bear(Pot& pot, HANDLE wakeBearEvent, HANDLE wakeBeesEvent);
 	void EatHoney();
 
 private:
 	Pot& m_pot;
-	HANDLE m_hWakeBearEvent;
-	HANDLE m_hWakeBeesEvent;
+	HANDLE m_wakeBearEvent;
+	HANDLE m_wakeBeesEvent;
 };

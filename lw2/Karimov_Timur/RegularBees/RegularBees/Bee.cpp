@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Bee.h"
 
-Bee::Bee(unsigned id, Pot& pot, HANDLE hWakeBearEvent, HANDLE hWakeBeesEvent, HANDLE hBeesPotAccessSemaphore)
+Bee::Bee(unsigned id, Pot& pot,
+	HANDLE wakeBearEvent,
+	HANDLE wakeBeesEvent,
+	HANDLE beesPotAccessSemaphore)
 	: m_id(id)
 	, m_pot(pot)
-	, m_hWakeBearEvent(hWakeBearEvent)
-	, m_hWakeBeesEvent(hWakeBeesEvent)
-	, m_hBeesPotAccessSemaphore(hBeesPotAccessSemaphore)
+	, m_wakeBearEvent(wakeBearEvent)
+	, m_wakeBeesEvent(wakeBeesEvent)
+	, m_beesPotAccessSemaphore(beesPotAccessSemaphore)
 	, m_gathered(false)
 {
 }
@@ -15,9 +18,9 @@ void Bee::GatherAndStoreHoney()
 {
 	while (true)
 	{
-		GatherHoneySip();
-		WaitForSingleObject(m_hWakeBeesEvent, INFINITE);
-		WaitForSingleObject(m_hBeesPotAccessSemaphore, INFINITE);
+		GatherHoneySipIfNotGatheredYet();
+		WaitForSingleObject(m_wakeBeesEvent, INFINITE);
+		WaitForSingleObject(m_beesPotAccessSemaphore, INFINITE);
 		if (m_pot.TryPutHoneySip())
 		{
 			std::printf("Bee #%u put gathered honey's sip into pot (%u/%u)\n", m_id, m_pot.GetHoneySipsCount(), m_pot.GetCapacity());
@@ -26,14 +29,14 @@ void Bee::GatherAndStoreHoney()
 		else
 		{
 			std::printf("Bee #%u is trying to put honey's sip but pot is full! Waking up bear...\n", m_id);
-			ResetEvent(m_hWakeBeesEvent);
-			SetEvent(m_hWakeBearEvent);
+			ResetEvent(m_wakeBeesEvent);
+			SetEvent(m_wakeBearEvent);
 		}
-		ReleaseSemaphore(m_hBeesPotAccessSemaphore, 1u, NULL);
+		ReleaseSemaphore(m_beesPotAccessSemaphore, 1u, NULL);
 	}
 }
 
-void Bee::GatherHoneySip()
+void Bee::GatherHoneySipIfNotGatheredYet()
 {
 	if (!m_gathered)
 	{

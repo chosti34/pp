@@ -1,23 +1,26 @@
 #pragma once
-#include <cstdio>
 #include "Pot.h"
-#include <Windows.h>
-#include "Chronometer.h"
+#include "ForwardDeclarations.h"
 
 class Bee
 {
 public:
-	Bee(unsigned id, Pot& pot, HANDLE hWakeBearEvent, HANDLE hWakeBeesEvent, HANDLE hBeesPotAccessSemaphore);
+	Bee(unsigned id, Pot& pot,
+		HANDLE wakeBearEvent,
+		HANDLE wakeBeesEvent,
+		HANDLE beesPotAccessSemaphore);
 
 	void GatherAndStoreHoney();
 
 private:
-	void GatherHoneySip();
+	void GatherHoneySipIfNotGatheredYet();
+
+	Pot& m_pot;
+
+	HANDLE m_wakeBearEvent;
+	HANDLE m_wakeBeesEvent;
+	HANDLE m_beesPotAccessSemaphore;
 
 	unsigned m_id;
 	bool m_gathered;
-	Pot& m_pot;
-	HANDLE m_hWakeBearEvent;
-	HANDLE m_hWakeBeesEvent;
-	HANDLE m_hBeesPotAccessSemaphore;
 };
