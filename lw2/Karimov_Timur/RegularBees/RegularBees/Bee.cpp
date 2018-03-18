@@ -2,9 +2,9 @@
 #include "Bee.h"
 
 Bee::Bee(unsigned id, Pot& pot,
-	HANDLE wakeBearEvent,
-	HANDLE wakeBeesEvent,
-	HANDLE beesPotAccessSemaphore)
+	std::shared_ptr<Event> wakeBearEvent,
+	std::shared_ptr<Event> wakeBeesEvent,
+	std::shared_ptr<Semaphore> beesPotAccessSemaphore)
 	: m_id(id)
 	, m_pot(pot)
 	, m_wakeBearEvent(wakeBearEvent)
@@ -19,8 +19,8 @@ void Bee::GatherAndStoreHoney()
 	while (true)
 	{
 		GatherHoneySipIfNotGatheredYet();
-		WaitForSingleObject(m_wakeBeesEvent, INFINITE);
-		WaitForSingleObject(m_beesPotAccessSemaphore, INFINITE);
+		m_beesPotAccessSemaphore->WaitAndLock();
+		m_wakeBeesEvent->WaitUntilSignalled();
 		if (m_pot.TryPutHoneySip())
 		{
 			std::printf("Bee #%u put gathered honey's sip into pot (%u/%u)\n", m_id, m_pot.GetHoneySipsCount(), m_pot.GetCapacity());
@@ -29,10 +29,10 @@ void Bee::GatherAndStoreHoney()
 		else
 		{
 			std::printf("Bee #%u is trying to put honey's sip but pot is full! Waking up bear...\n", m_id);
-			ResetEvent(m_wakeBeesEvent);
-			SetEvent(m_wakeBearEvent);
+			m_wakeBeesEvent->SetUnsignalled();
+			m_wakeBearEvent->SetSignalled();
 		}
-		ReleaseSemaphore(m_beesPotAccessSemaphore, 1u, NULL);
+		m_beesPotAccessSemaphore->Release();
 	}
 }
 

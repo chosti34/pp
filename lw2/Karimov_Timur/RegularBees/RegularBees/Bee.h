@@ -1,14 +1,16 @@
 #pragma once
 #include "Pot.h"
-#include "ForwardDeclarations.h"
+#include "Event.h"
+#include "Semaphore.h"
+#include <memory>
 
 class Bee
 {
 public:
 	Bee(unsigned id, Pot& pot,
-		HANDLE wakeBearEvent,
-		HANDLE wakeBeesEvent,
-		HANDLE beesPotAccessSemaphore);
+		std::shared_ptr<Event> wakeBearEvent,
+		std::shared_ptr<Event> wakeBeesEvent,
+		std::shared_ptr<Semaphore> beesPotAccessSemaphore);
 
 	void GatherAndStoreHoney();
 
@@ -17,9 +19,10 @@ private:
 
 	Pot& m_pot;
 
-	HANDLE m_wakeBearEvent;
-	HANDLE m_wakeBeesEvent;
-	HANDLE m_beesPotAccessSemaphore;
+	// maybe use just a reference
+	std::shared_ptr<Event> m_wakeBearEvent;
+	std::shared_ptr<Event> m_wakeBeesEvent;
+	std::shared_ptr<Semaphore> m_beesPotAccessSemaphore;
 
 	unsigned m_id;
 	bool m_gathered;
