@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Bear.h"
 
 Bear::Bear(Pot& pot, std::shared_ptr<Event> wakeBearEvent, std::shared_ptr<Event> wakeBeesEvent)
@@ -17,8 +17,8 @@ void Bear::EatHoney()
 		std::printf("Nom-nom-nom! (Bear ate honey's sip)\n");
 		if (m_pot.IsEmpty())
 		{
-			// Ì¸ä â ãîðøêå çàêîí÷èëñÿ, çíà÷èò ãîâîðèì ï÷¸ëàì ïðîñíóòüñÿ,
-			//  à ñàìè ëîæèìñÿ ñïàòü...
+			// ÐœÑ‘Ð´ Ð² Ð³Ð¾Ñ€ÑˆÐºÐµ Ð·Ð°ÐºÐ¾Ð½Ñ‡Ð¸Ð»ÑÑ, Ð·Ð½Ð°Ñ‡Ð¸Ñ‚ Ð³Ð¾Ð²Ð¾Ñ€Ð¸Ð¼ Ð¿Ñ‡Ñ‘Ð»Ð°Ð¼ Ð¿Ñ€Ð¾ÑÐ½ÑƒÑ‚ÑŒÑÑ,
+			//  Ð° ÑÐ°Ð¼Ð¸ Ð»Ð¾Ð¶Ð¸Ð¼ÑÑ ÑÐ¿Ð°Ñ‚ÑŒ...
 			m_wakeBearEvent->SetUnsignalled();
 			m_wakeBeesEvent->SetSignalled();
 		}
