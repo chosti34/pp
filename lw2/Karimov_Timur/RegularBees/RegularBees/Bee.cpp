@@ -2,6 +2,12 @@
 #include "Bee.h"
 #include "Random.h"
 
+namespace
+{
+const unsigned HONEY_SIP_GATHERING_TIME_MS_MIN = 1500u;
+const unsigned HONEY_SIP_GATHERING_TIME_MS_MAX = 5000u;
+}
+
 Bee::Bee(unsigned id, Pot& pot,
 	std::shared_ptr<Event> wakeBearEvent,
 	std::shared_ptr<Event> wakeBeesEvent,
@@ -42,7 +48,7 @@ void Bee::GatherHoneySipIfNotGatheredYet()
 	if (!m_gathered)
 	{
 		std::printf("Bee #%u gathering honey...\n", m_id);
-		Sleep(Random::Get(300, 1000));
+		Sleep(Random::Get(HONEY_SIP_GATHERING_TIME_MS_MIN, HONEY_SIP_GATHERING_TIME_MS_MAX));
 		m_gathered = true;
 		std::printf("Bee #%d gathered one honey's sip!\n", m_id);
 	}
