@@ -19,7 +19,6 @@ private:
 
 	Pot& m_pot;
 
-	// maybe use just a reference
 	std::shared_ptr<Event> m_wakeBearEvent;
 	std::shared_ptr<Event> m_wakeBeesEvent;
 	std::shared_ptr<Semaphore> m_beesPotAccessSemaphore;
