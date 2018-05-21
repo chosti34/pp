@@ -1,0 +1,11 @@
+# Visual Studio folder
+.vs/
+
+# User-specific file
+*.vcxproj.user
+
+# Output folders
+x64/
+x86/
+[Dd]ebug/
+[Rr]elease/
